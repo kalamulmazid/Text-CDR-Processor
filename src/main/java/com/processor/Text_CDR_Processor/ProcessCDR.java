@@ -13,123 +13,67 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ProcessCDR {
 
-	private static ConcurrentHashMap<String, CDR> cdrHashMap = new ConcurrentHashMap<>();
+	static HashMap<String, String> propertiesInformation = new HashMap<>();
+	static ConcurrentHashMap<String, String> fileNames = new ConcurrentHashMap<>();
+	static ConcurrentHashMap<String, CDR> cdrHashMap = new ConcurrentHashMap<>();
 
 	public ProcessCDR() {
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * <h1>Method Name: listFiles</h1> This method takes directory name as input
-	 * parameter and return list of files under that directory.
-	 * <p>
-	 * 
-	 * @param directoryName
-	 * @return ArrayList&lt;String&gt;
-	 * @author MD KALAM-UL-MAZID
-	 * @version 1.0
-	 */
-	public static ArrayList<String> listFiles(String directoryName) {
-
-		ArrayList<String> fileNames = new ArrayList<>();
-		File directory = new File(directoryName);
-
-		// get all the files from a directory
-		File[] fList = directory.listFiles();
-		for (File file : fList) {
-			if (file.isFile()) {
-				fileNames.add(file.getAbsolutePath());
-				// System.out.println(file.getAbsolutePath());
-			}
-		}
-		return fileNames;
-	}
-
 	public static void main(String[] args) {
 
 		// load properties file information
-		HashMap<String, String> propertiesInformation = ReadPropertiesFile.getProperties();
+		propertiesInformation = ReadPropertiesFile.getProperties();
 		// System.out.println(propertiesInformation.get("rawCDRDirectory"));
 
 		// load filenames from raw CDR directory
-		ArrayList<String> fileNames = listFiles(propertiesInformation.get("rawCDRDirectory"));
-		// Math.
+		fileNames = LoadFile.loadFilesInformation(propertiesInformation.get("rawCDRDirectory"));
 
-		// process individual file and push single CDR information into HashMap
-		for (String fileName : fileNames) {
-			processIndividualFile(fileName);
+		ExecutorService executor = Executors.newFixedThreadPool(3);
+		// // process individual file and push single CDR information into
+		// HashMap
+		//
+		Set<Entry<String, String>> fileNamesEntrySet = fileNames.entrySet();
+		for (Entry<String, String> fileName : fileNamesEntrySet) {
+			executor.submit(new FileProcessor(fileName.getKey()));
+
+			// process individual file and push single CDR information into
+			// HashMap
+			// FileProcessor.processFile(fileName.getKey());
 
 		}
 
+		System.out.println("File Processing Started...");
+		/*
+		 * below function is instructing executor service to stop taking any new
+		 * task after the previous submission and should down itself after all
+		 * the task is done
+		 */
+		executor.shutdown();
+
+		try {
+			executor.awaitTermination(1, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("File Processing Completed...");
+
+		//
 		// Output of populated cdrHashMap
-		Set<Entry<String, CDR>> values = cdrHashMap.entrySet();
-		for (Entry<String, CDR> entry : values) {
+		Set<Entry<String, CDR>> cdrHashMapEntrySet = cdrHashMap.entrySet();
+		for (Entry<String, CDR> entry : cdrHashMapEntrySet) {
 			// int key = enrty.getKey();
 			System.out.println(entry.getKey() + "............" + entry.getValue());
 		}
 
 		// Processing cdrHashMap for disbursing bonus
 
-	}
-
-	/**
-	 * <h1>Method Name: processIndividualFile</h1> This method takes file name
-	 * as input parameter, reads individual line in the file then tokenize and
-	 * push into HashMap.
-	 * <p>
-	 * 
-	 * @param fileName
-	 * @author MD KALAM-UL-MAZID
-	 * @version 1.0
-	 */
-	private static void processIndividualFile(String fileName) {
-		try {
-			File file = new File(fileName);
-			FileReader fileReader = new FileReader(file);
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				tokenizeAndPushIntoHashMap(line);
-			}
-			fileReader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * <h1>Method Name: tokenizeAndPushIntoHashMap</h1> This method takes String
-	 * as input parameter, tokenize it and push into HashMap and return list of
-	 * files under that directory.
-	 * <p>
-	 * 
-	 * @param fileName
-	 * @author MD KALAM-UL-MAZID
-	 * @version 1.0
-	 */
-
-	private static void tokenizeAndPushIntoHashMap(String line) {
-		// System.out.println(line);
-		CDR singleCDRObject = new CDR();
-		String[] cdrInfo = new String[3];
-		int initialPosition = 0;
-
-		StringTokenizer st = new StringTokenizer(line, ",");
-		while (st.hasMoreTokens()) {
-			// System.out.println(st.nextToken());
-			cdrInfo[initialPosition] = st.nextToken();
-			initialPosition++;
-		}
-
-		// Set data into singleCDRObject
-		singleCDRObject.setCallingParty(cdrInfo[0]);
-		singleCDRObject.setCalledParty(cdrInfo[1]);
-		singleCDRObject.setCallDuration(Integer.parseInt(cdrInfo[2]));
-
-		// Insert data into HashMap
-		cdrHashMap.put(cdrInfo[0], singleCDRObject);
 	}
 }

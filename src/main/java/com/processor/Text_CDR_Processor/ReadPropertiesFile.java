@@ -13,7 +13,6 @@ public class ReadPropertiesFile {
 	private static HashMap<String, String> propertiesInfo = new HashMap<>();
 
 	private ReadPropertiesFile() {
-
 	}
 
 	public static HashMap<String, String> getProperties() {
