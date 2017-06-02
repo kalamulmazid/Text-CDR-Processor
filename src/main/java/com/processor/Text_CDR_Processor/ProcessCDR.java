@@ -36,6 +36,54 @@ public class ProcessCDR {
 		// load filenames from raw CDR directory
 		fileNames = LoadFile.loadFilesInformation(propertiesInformation.get("rawCDRDirectory"));
 
+		producer();
+		
+		//consumer();
+
+		//
+		// Output of populated cdrHashMap
+		Set<Entry<String, CDR>> cdrHashMapEntrySet = cdrHashMap.entrySet();
+		for (Entry<String, CDR> entry : cdrHashMapEntrySet) {
+			// int key = enrty.getKey();
+			System.out.println(entry.getKey() + "............" + entry.getValue());
+		}
+
+		// Processing cdrHashMap for disbursing bonus
+
+	}
+	
+	private static void consumer() {
+		ExecutorService executor = Executors.newFixedThreadPool(3);
+		// // process individual file and push single CDR information into
+		// HashMap
+		//
+		Set<Entry<String, CDR>> cdrHashMapEntrySet = cdrHashMap.entrySet();
+		for (Entry<String, CDR> cdrObjectKey : cdrHashMapEntrySet) {
+			executor.submit(new CDRHashMapProcessor(cdrObjectKey.getValue()));
+
+			// process individual file and push single CDR information into
+			// HashMap
+			// FileProcessor.processFile(fileName.getKey());
+
+		}
+
+		System.out.println("CDR HashMap Processing Started...");
+		/*
+		 * below function is instructing executor service to stop taking any new
+		 * task after the previous submission and should down itself after all
+		 * the task is done
+		 */
+		executor.shutdown();
+
+		try {
+			executor.awaitTermination(1, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("CDR HashMap Processing Completed...");
+	}
+
+	private static void producer() {
 		ExecutorService executor = Executors.newFixedThreadPool(3);
 		// // process individual file and push single CDR information into
 		// HashMap
@@ -64,16 +112,5 @@ public class ProcessCDR {
 			e.printStackTrace();
 		}
 		System.out.println("File Processing Completed...");
-
-		//
-		// Output of populated cdrHashMap
-		Set<Entry<String, CDR>> cdrHashMapEntrySet = cdrHashMap.entrySet();
-		for (Entry<String, CDR> entry : cdrHashMapEntrySet) {
-			// int key = enrty.getKey();
-			System.out.println(entry.getKey() + "............" + entry.getValue());
-		}
-
-		// Processing cdrHashMap for disbursing bonus
-
 	}
 }

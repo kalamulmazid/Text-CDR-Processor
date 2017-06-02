@@ -1,6 +1,6 @@
 package com.processor.Text_CDR_Processor;
 
-public class CDR {
+class CDR {
 	private String callingParty;
 	private String calledParty;
 	private int callDuration;

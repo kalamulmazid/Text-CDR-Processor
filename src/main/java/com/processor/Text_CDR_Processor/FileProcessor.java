@@ -44,7 +44,8 @@ public class FileProcessor implements Runnable {
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			String line;
 			while ((line = bufferedReader.readLine()) != null) {
-				tokenizeAndPushIntoHashMap(line);
+				tokenizeAndPushIntoHashMap(line, fileName);
+				//tokenizeAndPushIntoHashMap(line);
 				Thread.sleep(100);
 			}
 			fileReader.close();
@@ -64,7 +65,7 @@ public class FileProcessor implements Runnable {
 	 * @version 1.0
 	 */
 
-	private void tokenizeAndPushIntoHashMap(String line) {
+	private void tokenizeAndPushIntoHashMap(String line, String fileName) {
 		// System.out.println(line);
 		CDR singleCDRObject = new CDR();
 		String[] cdrInfo = new String[3];
@@ -82,6 +83,7 @@ public class FileProcessor implements Runnable {
 		singleCDRObject.setCalledParty(cdrInfo[1]);
 		singleCDRObject.setCallDuration(Integer.parseInt(cdrInfo[2]));
 
+		System.out.println("Processing CDR of MSISDN: " + cdrInfo[0] + " of file " + fileName);
 		// Insert data into HashMap
 		ProcessCDR.cdrHashMap.put(cdrInfo[0], singleCDRObject);
 	}
