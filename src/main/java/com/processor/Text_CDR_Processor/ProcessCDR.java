@@ -38,7 +38,7 @@ public class ProcessCDR {
 
 		producer();
 		
-		//consumer();
+		consumer();
 
 		//
 		// Output of populated cdrHashMap
