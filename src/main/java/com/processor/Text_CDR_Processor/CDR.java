@@ -5,6 +5,10 @@ class CDR {
 	private String calledParty;
 	private int callDuration;
 	
+	CDR() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	String getCallingParty() {
 		return callingParty;
 	}

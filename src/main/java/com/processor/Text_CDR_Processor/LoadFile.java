@@ -11,8 +11,8 @@ public class LoadFile {
 	}
 
 	/**
-	 * <h1>Method Name: loadFiles</h1> This method takes directory name as input
-	 * parameter and list the files into ArrayList.
+	 * <h1>Method Name: loadFilesInformation</h1> This method takes directory name as input
+	 * parameter and list files information into ConcurrentHashMap.
 	 * <p>
 	 * 
 	 * @param directoryName

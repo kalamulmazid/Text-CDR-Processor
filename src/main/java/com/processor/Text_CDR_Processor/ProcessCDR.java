@@ -31,7 +31,7 @@ public class ProcessCDR {
 
 		// load properties file information
 		propertiesInformation = ReadPropertiesFile.getProperties();
-		// System.out.println(propertiesInformation.get("rawCDRDirectory"));
+		//System.out.println(propertiesInformation.get("rawCDRDirectory"));
 
 		// load filenames from raw CDR directory
 		fileNames = LoadFile.loadFilesInformation(propertiesInformation.get("rawCDRDirectory"));
@@ -54,17 +54,11 @@ public class ProcessCDR {
 	
 	private static void consumer() {
 		ExecutorService executor = Executors.newFixedThreadPool(3);
-		// // process individual file and push single CDR information into
-		// HashMap
-		//
+
 		Set<Entry<String, CDR>> cdrHashMapEntrySet = cdrHashMap.entrySet();
 		for (Entry<String, CDR> cdrObjectKey : cdrHashMapEntrySet) {
+			// process individual CDR of cdrHashMap
 			executor.submit(new CDRHashMapProcessor(cdrObjectKey.getValue()));
-
-			// process individual file and push single CDR information into
-			// HashMap
-			// FileProcessor.processFile(fileName.getKey());
-
 		}
 
 		System.out.println("CDR HashMap Processing Started...");
@@ -85,17 +79,11 @@ public class ProcessCDR {
 
 	private static void producer() {
 		ExecutorService executor = Executors.newFixedThreadPool(3);
-		// // process individual file and push single CDR information into
-		// HashMap
-		//
+		
 		Set<Entry<String, String>> fileNamesEntrySet = fileNames.entrySet();
 		for (Entry<String, String> fileName : fileNamesEntrySet) {
+			// process individual file
 			executor.submit(new FileProcessor(fileName.getKey()));
-
-			// process individual file and push single CDR information into
-			// HashMap
-			// FileProcessor.processFile(fileName.getKey());
-
 		}
 
 		System.out.println("File Processing Started...");

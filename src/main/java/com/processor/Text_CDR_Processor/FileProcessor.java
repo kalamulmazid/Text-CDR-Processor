@@ -10,7 +10,7 @@ public class FileProcessor implements Runnable {
 
 	private String fileName;
 
-	public FileProcessor(String fileName) {
+	FileProcessor(String fileName) {
 		this.fileName = fileName;
 	}
 
@@ -31,7 +31,6 @@ public class FileProcessor implements Runnable {
 	 * as input parameter, reads individual line in the file then tokenize and
 	 * push into HashMap.
 	 * <p>
-	 * 
 	 * @param fileName
 	 * @author MD KALAM-UL-MAZID
 	 * @version 1.0
@@ -55,9 +54,8 @@ public class FileProcessor implements Runnable {
 	}
 
 	/**
-	 * <h1>Method Name: tokenizeAndPushIntoHashMap</h1> This method takes String
-	 * as input parameter, tokenize it and push into HashMap and return list of
-	 * files under that directory.
+	 * <h1>Method Name: tokenizeAndPushIntoHashMap</h1> This method takes individual line of a file 
+	 * and file name as input parameters, tokenize line of the file and push into HashMap
 	 * <p>
 	 * 
 	 * @param fileName
