@@ -83,6 +83,6 @@ public class FileProcessor implements Runnable {
 
 		System.out.println("Processing CDR of MSISDN: " + cdrInfo[0] + " of file " + fileName);
 		// Insert data into HashMap
-		ProcessCDR.cdrHashMap.put(cdrInfo[0], singleCDRObject);
+		App.cdrHashMap.put(cdrInfo[0], singleCDRObject);
 	}
 }
